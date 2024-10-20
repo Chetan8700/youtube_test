@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronics Chatbot</title>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-image: url('test.jpg'); /* Add a background image */
+            background-size: cover;
+            background-position: center;
+            color: white; /* Set default text color to white for better visibility */
+        }
+    
+        /* Chatbox styles */
+        #chatbox {
+            width: 400px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            margin: 0 auto; /* Center the chatbox */
+            margin-bottom: 10px; /* Add some space below the chatbox */
+        }
+    
+        #chatbox p {
+            margin-bottom: 10px;
+        }
+    
+        #chatbox strong {
+            color: #4CAF50; /* Change bot message color to a green shade */
+        }
+    
+        /* User message color */
+        #chatbox .user-message {
+            color: #FFD700; /* Change user message color to gold */
+        }
+    
+        /* Input area styles */
+        #inputArea {
+            width: 400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+        }
+    
+        #userInput {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px; /* Space between input and button */
+        }
+    
+        button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: #fff;
+            cursor: pointer;
+        }
+    
+        button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <h1>Electronics Chatbot</h1>
+    <div id="chatbox">
+        <p><strong>Bot:</strong> Welcome to the Electronics Recommendation Chatbot!</p>
+        <p><strong>Bot:</strong> What type of electronic product are you interested in? (1. Laptops  2. Smartphones  3. Cameras)</p>
+    </div>
+    <div id="inputArea">
+        <input type="text" id="userInput" placeholder="Type your message" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        let currentQuestionIndex = 0;
+        let selectedProduct = "";
+        let selectedPrice = "";
+        let selectedBrand = "";
+        let selectedBatteryLife = "";
+        
+        const questions = [
+            "What type of electronic product are you interested in? (1. Laptops  2. Smartphones  3. Cameras)",
+            "What is your price range for laptops? (1. Below $500  2. $500-$1000  3. Above $1000)",
+            "Which brand do you prefer for laptops? (1. HP  2. Dell  3. Lenovo)",
+            "What is your preferred battery life? (1. Less than 6 hours  2. 6-10 hours  3. More than 10 hours)"
+        ];
+
+        const finalRecommendations = {
+            "1_1_1_1": "We recommend the HP Pavilion Gaming with less than 6 hours of battery life.",
+            "1_1_1_2": "We recommend the HP Pavilion with 6-10 hours of battery life.",
+            "1_1_1_3": "We recommend the HP Spectre with more than 10 hours of battery life.",
+            "1_1_2_1": "We recommend the Dell Inspiron Gaming with less than 6 hours of battery life.",
+            "1_1_2_2": "We recommend the Dell Inspiron with 6-10 hours of battery life.",
+            "1_1_2_3": "We recommend the Dell XPS with more than 10 hours of battery life.",
+            "1_1_3_1": "We recommend the Lenovo ThinkPad with less than 6 hours of battery life.",
+            "1_1_3_2": "We recommend the Lenovo Yoga with 6-10 hours of battery life.",
+            "1_1_3_3": "We recommend the Lenovo Legion with more than 10 hours of battery life.",
+            // Add more recommendations for smartphones and cameras if needed
+        };
+
+        document.getElementById('userInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') { // Check if the pressed key is Enter
+                event.preventDefault(); // Prevent the default action (form submission)
+                sendMessage(); // Call the sendMessage function
+            }
+        });
+
+        function sendMessage() {
+            const userInputElement = document.getElementById('userInput');
+            const userMessage = userInputElement.value.trim();
+            const chatbox = document.getElementById('chatbox');
+
+            if (userMessage === "") {
+                return;  // Prevent sending empty messages
+            }
+
+            // Display the user's message in the chatbox
+            chatbox.innerHTML += `<p><strong>You:</strong> ${userMessage}</p>`;
+
+            // Process the user response and update the question
+            let responseMessage = "";
+
+            if (currentQuestionIndex === 0) {
+                // First question about the type of electronic product
+                selectedProduct = userMessage;  // Store user selection
+                if (userMessage === "1") {
+                    responseMessage = questions[1]; // Next question about laptop price range
+                } else if (userMessage === "2") {
+                    responseMessage = "We recommend Samsung Galaxy A series, Google Pixel 4a, or OnePlus Nord."; // Smartphone recommendation
+                    currentQuestionIndex++; // Move to the next question
+                } else if (userMessage === "3") {
+                    responseMessage = "We recommend Canon EOS Rebel, Nikon D3500, or Sony Alpha A6000."; // Camera recommendation
+                    currentQuestionIndex++; // Move to the next question
+                } else {
+                    responseMessage = "Invalid input. Please select 1, 2, or 3.";
+                }
+            } else if (currentQuestionIndex === 1) {
+                // Price range question for laptops
+                if (userMessage === "1" || userMessage === "2" || userMessage === "3") {
+                    selectedPrice = userMessage; // Store price selection
+                    responseMessage = questions[2]; // Next question about brand
+                } else {
+                    responseMessage = "Invalid input. Please select 1, 2, or 3.";
+                }
+            } else if (currentQuestionIndex === 2) {
+                // Brand preference question for laptops
+                if (userMessage === "1" || userMessage === "2" || userMessage === "3") {
+                    selectedBrand = userMessage; // Store brand selection
+                    responseMessage = questions[3]; // Next question about battery life
+                } else {
+                    responseMessage = "Invalid input. Please select 1, 2, or 3.";
+                }
+            } else if (currentQuestionIndex === 3) {
+                // Battery life preference question
+                if (userMessage === "1" || userMessage === "2" || userMessage === "3") {
+                    selectedBatteryLife = userMessage; // Store battery life selection
+                    responseMessage = finalRecommendations[selectedProduct + "_" + selectedPrice + "_" + selectedBrand + "_" + selectedBatteryLife] || "No recommendation available for this selection.";
+                } else {
+                    responseMessage = "Invalid input. Please select 1, 2, or 3.";
+                }
+            }
+
+            // Increment the question index only if a valid response was given
+            if (responseMessage && !responseMessage.includes("Invalid input")) {
+                currentQuestionIndex++;
+            }
+
+            // Display the bot's response
+            if (responseMessage) {
+                chatbox.innerHTML += `<p><strong>Bot:</strong> ${responseMessage}</p>`;
+            }
+
+            chatbox.scrollTop = chatbox.scrollHeight; // Scroll to the bottom of the chatbox
+
+            // Clear the input field after sending
+            userInputElement.value = '';
+            userInputElement.focus(); // Focus back to the input field
+        }
+    </script>
+</body>
+</html>
